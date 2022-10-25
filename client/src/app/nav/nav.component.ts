@@ -25,7 +25,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.accountService.currentUser$;
-    this.accountSub = this.accountService.currentUser$.subscribe(user => this.currentUserName = user.username);
+    //this.accountSub = this.accountService.currentUser$.subscribe(user => this.currentUserName = user.username);
   }
 
   login() {
@@ -51,7 +51,7 @@ export class NavComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.accountSub.unsubscribe();
+    //this.accountSub.unsubscribe();
   }
 
 }
