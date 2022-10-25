@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { map, Observable, Subscription } from 'rxjs';
 import { User } from '../models/user';
 import { AccountService } from '../services/account.service';
@@ -17,7 +18,8 @@ export class NavComponent implements OnInit, OnDestroy {
   accountSub: Subscription;
 
   constructor( private accountService: AccountService,
-               private router: Router
+               private router: Router,
+               private toastr: ToastrService
               ) { }
 
 
@@ -36,7 +38,10 @@ export class NavComponent implements OnInit, OnDestroy {
         // console.log(response);
         this.router.navigateByUrl('/members');
       },
-        error: error => console.log(error)
+        error: error => {
+          console.log(error);
+          this.toastr.error(error.error);
+      }
       });
   }
 
