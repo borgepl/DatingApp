@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { map, Observable, Subscription } from 'rxjs';
 import { User } from '../models/user';
 import { AccountService } from '../services/account.service';
@@ -15,7 +16,9 @@ export class NavComponent implements OnInit, OnDestroy {
   currentUser: Observable<User>;
   accountSub: Subscription;
 
-  constructor( private accountService: AccountService) { }
+  constructor( private accountService: AccountService,
+               private router: Router
+              ) { }
 
 
   ngOnInit(): void {
@@ -30,7 +33,8 @@ export class NavComponent implements OnInit, OnDestroy {
      this.accountService.login(this.model)
       .subscribe({
         next: response => {
-        console.log(response);
+        // console.log(response);
+        this.router.navigateByUrl('/members');
       },
         error: error => console.log(error)
       });
@@ -38,6 +42,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
   logout() {
     this.accountService.logout();
+    this.router.navigateByUrl('/');
   }
 
   ngOnDestroy(): void {
