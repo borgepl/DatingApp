@@ -40,7 +40,6 @@ export class NavComponent implements OnInit, OnDestroy {
       },
         error: error => {
           console.log(error);
-          this.toastr.error(error.error);
       }
       });
   }
