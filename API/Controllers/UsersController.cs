@@ -26,6 +26,16 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        // api/users
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        {
+            var users = await this.userRepository.GetMembersAsync();
+            
+            return Ok(users);
+
+        }
+
+   /*      [HttpGet]
         //[AllowAnonymous]
         // api/users
         // Could also use ActionResult<List<AppUser>> -- List of AppUser
@@ -36,7 +46,7 @@ namespace API.Controllers
             
             return Ok(usersToReturn);
 
-        }
+        } */
 
        /*  [HttpGet("{id}")]
         // api/users/1
@@ -46,13 +56,23 @@ namespace API.Controllers
             
         } */
 
-        [HttpGet("{username}")]
+        /* [HttpGet("{username}")]
         // api/users/lisa
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
             var user = await this.userRepository.GetUserByUsernameAsync(username);
 
             return this.mapper.Map<MemberDto>(user);
+            
+        } */
+
+        [HttpGet("{username}")]
+        // api/users/lisa
+        public async Task<ActionResult<MemberDto>> GetUser(string username)
+        {
+            return await this.userRepository.GetMemberAsync(username);
+
+            
             
         }
     }
