@@ -18,6 +18,7 @@ export class MemberListComponent implements OnInit {
   pagination: Pagination | undefined;
   userParams: userParams;
   user: User;
+  genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Females'}]
 
   constructor( private membersService: MembersService, private accountService: AccountService) {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
@@ -43,6 +44,13 @@ export class MemberListComponent implements OnInit {
         }
       }
     })
+  }
+
+  resetFilters() {
+    if (this.user) {
+      this.userParams = new userParams(this.user);
+      this.loadMembers();
+    }
   }
 
   pageChanged(event: any) {
