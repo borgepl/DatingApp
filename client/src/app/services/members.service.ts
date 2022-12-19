@@ -1,10 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, map } from 'rxjs';
+import { of, map, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Member } from '../models/member';
 import { PaginatedResult } from '../models/pagination';
+import { User } from '../models/user';
 import { userParams } from '../models/userParams';
+import { AccountService } from './account.service';
 
 // No longer used - Header will be added by the jwt.interceptor
 
@@ -22,8 +24,34 @@ export class MembersService {
   members: Member[] = [];
   baseUrl = environment.apiUrl;
   memberCache =  new Map();
+  user: User;
+  userParams: userParams;
 
-  constructor( private http: HttpClient) { }
+  constructor( private http: HttpClient, private accountService : AccountService) {
+    this.accountService.currentUser$.pipe(take(1)).subscribe({
+      next: user => {
+        if (user) {
+          this.userParams = new userParams(user);
+          this.user = user;
+        }
+      }
+    })
+  }
+
+  getUserParams() {
+    return this.userParams;
+  }
+
+  setUserParams(params: userParams) {
+    this.userParams = params;
+  }
+
+  resetUserParams() {
+    if (this.user) {
+      this.userParams = new userParams(this.user);
+      return this.userParams;
+    }
+  }
 
   getMembers(userParams: userParams) {
 
