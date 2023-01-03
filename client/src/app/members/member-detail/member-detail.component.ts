@@ -18,6 +18,7 @@ export class MemberDetailComponent implements OnInit {
   activeTab?: TabDirective;
 
   member: Member = {} as Member;
+  
   messages: Message[] = [];
   galleryOptions: NgxGalleryOptions[] = [];
   galleryImages: NgxGalleryImage[] = [];
