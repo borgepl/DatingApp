@@ -1,6 +1,6 @@
 <h2 *ngIf="member">{{member.knownAs}}</h2>
 
-<div class="row" *ngIf="member">
+<div class="row">
 
   <div class="col-4">
     <div class="card">
@@ -27,7 +27,7 @@
       <div class="card-footer">
         <div class="btn-group d-flex">
           <button class="btn btn-primary">Like</button>
-          <button class="btn btn-success">Message</button>
+          <button (click)="selectTab('Messages')" class="btn btn-success">Messages</button>
         </div>
       </div>
     </div>

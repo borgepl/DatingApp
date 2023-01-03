@@ -14,10 +14,10 @@ import { MessageService } from 'src/app/services/message.service';
 })
 export class MemberDetailComponent implements OnInit {
 
-  @ViewChild('memberTabs') memberTab?: TabsetComponent
+  @ViewChild('memberTabs', {static: true}) memberTabs?: TabsetComponent
   activeTab?: TabDirective;
 
-  member: Member;
+  member: Member = {} as Member;
   messages: Message[] = [];
   galleryOptions: NgxGalleryOptions[] = [];
   galleryImages: NgxGalleryImage[] = [];
@@ -28,7 +28,21 @@ export class MemberDetailComponent implements OnInit {
               ) { }
 
   ngOnInit(): void {
-    this.loadMember();
+
+    // gets data from the route-resolver - added to the routing in the app-routing-module
+    this.route.data.subscribe({
+      next:  data => {
+        this.member = data['member'];
+        this.galleryImages = this.getImages();
+      }
+    })
+    //this.loadMember();
+
+    this.route.queryParams.subscribe({
+      next: params => {
+        params['tab'] && this.selectTab(params['tab'])
+      }
+    })
 
     this.galleryOptions = [
       {
@@ -63,6 +77,12 @@ export class MemberDetailComponent implements OnInit {
         this.galleryImages = this.getImages();
       }
     })
+  }
+
+  selectTab(heading: string) {
+    if (this.memberTabs) {
+      this.memberTabs.tabs.find(x => x.heading === heading)!.active = true;
+    }
   }
 
   loadMessages() {
