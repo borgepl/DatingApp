@@ -24,6 +24,7 @@ namespace API.Controllers
             
         }
 
+        // Just for Tests with Postman // [Authorize(Roles = "Admin")]
         [HttpGet]
         // api/users
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
@@ -75,6 +76,7 @@ namespace API.Controllers
             
         } */
 
+        // Just to Tests // [Authorize(Roles = "Member")]
         [HttpGet("{username}")]
         // api/users/lisa
         public async Task<ActionResult<MemberDto>> GetUser(string username)
