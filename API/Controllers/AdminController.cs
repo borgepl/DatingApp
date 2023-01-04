@@ -40,6 +40,32 @@ namespace API.Controllers
             return Ok(users);
         }
 
+         [Authorize(Policy = "RequireAdminRole")]
+         [HttpPost("edit-roles/{username}")]
+         public async Task<ActionResult> EditRoles(string username, [FromQuery] string roles)
+         {
+            if (string.IsNullOrEmpty(roles)) return BadRequest("You must select at least one role");
+
+            var selectedRoles = roles.Split(",").ToArray();
+
+            var user = await userManager.FindByNameAsync(username);
+
+            if (user == null) return NotFound();
+
+            var existingUserRoles = await userManager.GetRolesAsync(user);
+
+            var result = await userManager.AddToRolesAsync(user, selectedRoles.Except(existingUserRoles));
+
+            if (!result.Succeeded) return BadRequest("Failed to add to roles");
+
+            result = await userManager.RemoveFromRolesAsync(user, existingUserRoles.Except(selectedRoles));
+
+            if (!result.Succeeded) return BadRequest("Failed to remove existing roles");
+
+            return Ok(await userManager.GetRolesAsync(user));
+
+         }
+
 
         // api/admin/photos-to-moderate
         [Authorize(Policy = "ModeratePhotoRole")]
