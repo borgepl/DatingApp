@@ -4,6 +4,7 @@ import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class AccountService {
 
   // curUser$ = new BehaviorSubject<User>(null);
 
-  constructor( private http: HttpClient) { }
+  constructor( private http: HttpClient, private presenceSercive: PresenceService) { }
 
   login(model: any) {
     return this.http.post(this.baseUrl + 'account/login', model).pipe(
@@ -45,11 +46,13 @@ export class AccountService {
     Array.isArray(roles) ? user.roles = roles : user.roles.push(roles);
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
+    this.presenceSercive.creatHubConnection(user);
   }
 
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.presenceSercive.stopHubConnection();
   }
 
   getDecodedToken(token: string) {
