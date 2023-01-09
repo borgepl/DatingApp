@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
 import { HubConnectionBuilder } from '@microsoft/signalr/dist/esm/HubConnectionBuilder';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../models/message';
 import { User } from '../models/user';
@@ -32,7 +32,14 @@ export class MessageService {
     this.hubConnection.start().catch(error => console.log(error));
     this.hubConnection.on('ReceiveMessageThread', messages => {
       this.messageThreadSource.next(messages);
-    })
+    });
+    this.hubConnection.on('NewMessage', message => {
+      this.messageThread$.pipe(take(1)).subscribe({
+        next: messages => {
+          this.messageThreadSource.next([...messages, message])
+        }
+      })
+    });
   }
 
   stopHubConnection() {
@@ -56,9 +63,14 @@ export class MessageService {
     return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + username);
   }
 
-  sendMessage(username: string, content: string) {
-    return this.http.post<Message>(this.baseUrl + 'messages',
-       {recipientUsername: username, content: content});
+  // sendMessage(username: string, content: string) {
+  //   return this.http.post<Message>(this.baseUrl + 'messages',
+  //      {recipientUsername: username, content: content});
+  // }
+
+  async sendMessage(username: string, content: string) {
+    return this.hubConnection.invoke('SendMessage', {recipientUsername: username, content})
+      .catch(error => console.log(error));
   }
 
   deleteMessage(id: number) {

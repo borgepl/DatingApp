@@ -21,13 +21,20 @@ export class MemberMessagesComponent implements OnInit {
 
   }
 
-  sendMessage() {
+/*   sendMessage() {
     if (!this.username) return;
     this.messageService.sendMessage(this.username, this.messageContent).subscribe({
       next: message => {
         // this.messages.push(message);
         // this.messageForm?.reset();
       }
+    })
+  } */
+
+  sendMessage() {
+    if (!this.username) return;
+    this.messageService.sendMessage(this.username, this.messageContent).then(() => {
+      this.messageForm.reset();
     })
   }
 
