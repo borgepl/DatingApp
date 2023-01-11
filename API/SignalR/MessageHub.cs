@@ -33,6 +33,7 @@ namespace API.SignalR
             var otherUser = httpContext.Request.Query["user"];
             var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
             await Groups.AddToGroupAsync(Context.ConnectionId,groupName);
+            await AddToGroup(groupName);
 
             var messages = 
                 await messageRepository.GetMessageThread(Context.User.GetUsername(), otherUser);
@@ -41,9 +42,10 @@ namespace API.SignalR
 
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
-            return base.OnDisconnectedAsync(exception);
+            await RemoveFromMessageGroup();
+            await base.OnDisconnectedAsync(exception);
         }
         
         public async Task SendMessage(CreateMessageDto createMessageDto)
@@ -68,12 +70,19 @@ namespace API.SignalR
                 Content = createMessageDto.Content
             };
 
+            var groupName = GetGroupName(sender.UserName, recipient.UserName);
+            var group = await messageRepository.GetMessageGroup(groupName);
+
+            if (group.Connections.Any(x => x.Username == recipient.UserName))
+            {
+                message.DateRead = DateTime.UtcNow;
+            }
+
             messageRepository.AddMessage(message);
 
             if (await messageRepository.SaveAllAsync()) 
             {
-                var group = GetGroupName(sender.UserName, recipient.UserName);
-                await Clients.Group(group).SendAsync("NewMessage", mapper.Map<MessageDto>(message));
+                await Clients.Group(groupName).SendAsync("NewMessage", mapper.Map<MessageDto>(message));
             }
 
         }
@@ -83,6 +92,31 @@ namespace API.SignalR
         {
             var stringCompare = string.CompareOrdinal(caller, other) < 0;
             return stringCompare ? $"{caller}-{other}" : $"{other}-{caller}";
+        }
+
+        // method to add the group to Database
+        private async Task<bool> AddToGroup(string groupName)
+        {
+            var group = await messageRepository.GetMessageGroup(groupName);
+            var connention = new Connection(Context.ConnectionId, Context.User.GetUsername());
+
+            if (group == null) {
+                group = new Group(groupName);
+                messageRepository.AddGroup(group);
+            }
+
+            group.Connections.Add(connention);
+
+            return await messageRepository.SaveAllAsync();
+    
+        }
+
+        // method to remove a connection from a group
+        private async Task RemoveFromMessageGroup()
+        {
+            var connection = await messageRepository.GetConnection(Context.ConnectionId);
+            messageRepository.RemoveConnection(connection);
+            await messageRepository.SaveAllAsync();
         }
     }
 }
