@@ -103,7 +103,8 @@ namespace API.Data.Repositories
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
-                await this.context.SaveChangesAsync();
+                // moved inside MessageHub with UnitOfWork HasChanges and Complete method
+                //await this.context.SaveChangesAsync();
             }
 
             return mapper.Map<IEnumerable<MessageDto>>(messages);
@@ -114,9 +115,5 @@ namespace API.Data.Repositories
            this.context.Connections.Remove(connection);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await this.context.SaveChangesAsync() > 0;
-        }
     }
 }
