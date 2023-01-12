@@ -83,7 +83,7 @@ namespace API.Data.Repositories
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUserName, string recipientUserName)
         {
-            var messages = await this.context.Messages
+           /*  var messages = await this.context.Messages
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)
                 .Include(u => u.Recipient).ThenInclude(p => p.Photos)
                 .Where(
@@ -93,7 +93,17 @@ namespace API.Data.Repositories
                     m.SenderUsername == currentUserName 
                 )
                 .OrderBy(m => m.MessageSent)
-                .ToListAsync();
+                .ToListAsync(); */
+
+             var messages = this.context.Messages
+                .Where(
+                    m => m.RecipientUsername == currentUserName && m.RecipientDeleted == false &&
+                    m.SenderUsername == recipientUserName ||
+                    m.RecipientUsername == recipientUserName && m.SenderDeleted == false &&
+                    m.SenderUsername == currentUserName 
+                )
+                .OrderBy(m => m.MessageSent)
+                .AsQueryable();
 
             var unreadMessages = messages
                 .Where(m => m.DateRead == null && m.RecipientUsername == currentUserName ).ToList();
@@ -107,7 +117,8 @@ namespace API.Data.Repositories
                 //await this.context.SaveChangesAsync();
             }
 
-            return mapper.Map<IEnumerable<MessageDto>>(messages);
+            // return mapper.Map<IEnumerable<MessageDto>>(messages);
+            return await messages.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
         }
 
         public void RemoveConnection(Connection connection)
