@@ -37,6 +37,7 @@ export class NavComponent implements OnInit, OnDestroy {
         next: response => {
         // console.log(response);
         this.router.navigateByUrl('/members');
+        this.model = {};
       },
         error: error => {
           console.log(error);
