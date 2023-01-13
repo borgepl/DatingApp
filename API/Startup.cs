@@ -77,11 +77,16 @@ namespace API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // to host client angular app inside the API server.
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<PresenceHub>("hubs/presence");
                 endpoints.MapHub<MessageHub>("hubs/message");
+                endpoints.MapFallbackToController("Index", "FallBack");
             });
 
             // app.MapHub<PresenceHub>("hubs/presence");
