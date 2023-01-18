@@ -16,8 +16,10 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            var connectionString = config.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<DataContext>(options => {
-                options.UseSqlite(config.GetConnectionString("DefaultConnection"));
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
             services.AddScoped<ITokenService, TokenService>();
             //services.AddScoped<IUserRepository, UserRepository>();
