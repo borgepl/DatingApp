@@ -1,12 +1,12 @@
 <div class="row mb-4" *ngIf="member">
-  <div class="col-2 mb-1" *ngFor="let photo of member.photos">
+  <div class="col-2 mb-1 d-flex flex-column" *ngFor="let photo of member.photos">
     <img src="{{photo.url}}" alt="photo of user" class="img-thumbnail mb-1">
-    <div class="text-center">
-      <button class="btn btn-sm"
+    <div class="d-flex">
+      <button class="btn btn-sm flex-grow-1"
         [disabled]="photo.isMain"
         (click)="setMainPhoto(photo)"
         [ngClass]=" photo.isMain ? 'btn-success active' : 'btn-outline-success' ">Main</button>
-      <button class="btn btn-sm btn-danger"
+      <button class="btn btn-sm btn-danger flex-grow-1"
         [disabled]="photo.isMain"
         (click)="deletePhoto(photo)"
       ><i class="fa fa-trash"></i></button>
