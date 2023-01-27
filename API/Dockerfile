@@ -8,7 +8,7 @@ RUN dotnet restore
 
 # copy everything else and build
 COPY . ./
-RUN dotnet publish -c Release -o out
+RUN --mount=type=secret,id=mysecs,dst=/etc/secrets/mysecs && dotnet publish -c Release -o out
 
 # build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
