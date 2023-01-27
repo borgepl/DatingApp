@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:1.2
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /app
 EXPOSE 8080
@@ -8,7 +9,7 @@ RUN dotnet restore
 
 # copy everything else and build
 COPY . ./
-RUN --mount=type=secret,id=mysecs,dst=/etc/secrets/mysecs && dotnet publish -c Release -o out
+RUN --mount=type=secret,id=mysecs,dst=/etc/secrets/mysecs dotnet publish -c Release -o out
 
 # build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
