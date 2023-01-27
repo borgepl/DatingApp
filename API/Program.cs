@@ -19,16 +19,13 @@
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingAPI", Version = "v1" });
         });
 
-    // configure the HTTP request pipeline.
 
-    var app = builder.Build();
-    var env = app.Environment;
-
-    var connStr ="";
+    // Database connection string
+     var connStr ="";
 
     // Depending on if in development or production, use either-provided
     // connection string, or development connection string from env var.
-    if (env.IsDevelopment())
+    if (builder.Environment.IsDevelopment())
     {
         // Use connection string from file.
         connStr = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -57,6 +54,11 @@
     builder.Services.AddDbContext<DataContext>(opt => {
         opt.UseNpgsql(connStr);
     });
+
+    // configure the HTTP request pipeline.
+
+    var app = builder.Build();
+    var env = app.Environment;
 
 
         app.UseMiddleware<ExceptionMiddleware>();
