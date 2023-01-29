@@ -106,7 +106,6 @@
             catch (Exception ex)
             {
                 var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError("connection: " + pgPass);
                 logger.LogError(ex, "An error occured during seed or migration");
             }
 
