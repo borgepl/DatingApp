@@ -19,7 +19,7 @@
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingAPI", Version = "v1" });
         });
 
-   var logger = services.GetRequiredService<ILogger<Program>>();
+   
     // Database connection string
      var connStr ="";
 
@@ -45,8 +45,6 @@
         var pgPass = pgUserPass.Split(":")[1];
         var pgHost = pgHostPort.Split(":")[0];
         var pgPort = pgHostPort.Split(":")[1];
-
-       logger.LogError("connection: " + pgPass);
        
         connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSL Mode=Require;TrustServerCertificate=True";
     } 
@@ -107,7 +105,8 @@
             }
             catch (Exception ex)
             {
-                
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError("connection: " + pgPass);
                 logger.LogError(ex, "An error occured during seed or migration");
             }
 
