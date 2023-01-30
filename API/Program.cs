@@ -46,11 +46,11 @@
         var pgHost = pgHostPort.Split(":")[0];
         var pgPort = pgHostPort.Split(":")[1];
        
-       ILogger logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
-       logger.LogInformation("This is a testlog");
-       logger.LogInformation(pgPass);
+    //    ILogger logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+    //    logger.LogInformation("This is a testlog");
+    //    logger.LogInformation(pgPass);
        
-        connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSLMode=Prefer;TrustServerCertificate=True";
+        connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};ssl=true;SSLMode=Require;TrustServerCertificate=True";
     } 
     
     // Whether the connection string came from the local development configuration file
