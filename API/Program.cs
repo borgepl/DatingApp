@@ -50,7 +50,7 @@
     //    logger.LogInformation("This is a testlog");
     //    logger.LogInformation(pgPass);
        
-        connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};ssl=true;SSLMode=Require;TrustServerCertificate=True";
+        connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};SSLMode=Require;TrustServerCertificate=True";
     } 
     
     // Whether the connection string came from the local development configuration file
